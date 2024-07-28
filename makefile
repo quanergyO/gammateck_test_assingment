@@ -19,23 +19,23 @@ TARGET = $(BUILD_DIR)/myapp
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-    @mkdir -p $(BUILD_DIR)
-    $(CXX) $(OBJECTS) -o $(TARGET) $(LDFLAGS)
+	@mkdir -p $(BUILD_DIR)
+	$(CXX) $(OBJECTS) -o $(TARGET) $(LDFLAGS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-    @mkdir -p $(OBJ_DIR)
-    $(CXX) $(CXXFLAGS) -c $< -o $@
+	@mkdir -p $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/moc_%.cpp: $(INCLUDE_DIR)/%.h
-    @mkdir -p $(BUILD_DIR)
-    moc $< -o $@
+	@mkdir -p $(BUILD_DIR)
+	moc $< -o $@
 
 $(INCLUDE_DIR)/ui_%.h: $(UI_DIR)/%.ui
-    @mkdir -p $(INCLUDE_DIR)
-    uic $< -o $@
+	@mkdir -p $(INCLUDE_DIR)
+	uic $< -o $@
 
 clean:
-    rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR)
 
 rebuild: clean all
 
