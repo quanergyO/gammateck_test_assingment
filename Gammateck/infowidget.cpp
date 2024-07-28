@@ -24,6 +24,7 @@ InfoWidget::InfoWidget(FigureModel* model, QWidget *parent)
         Q_UNUSED(topLeft);
         Q_UNUSED(bottomRight);
         tableView->update();
+        tableView->resizeColumnsToContents();
     });
 
     connect(tableView, &QAbstractItemView::clicked, this, [this](const QModelIndex &index) {

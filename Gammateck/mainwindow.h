@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QStackedLayout>
+#include <QThread>
 
 #include "datareceiver.h"
 #include "figuretablemodel.h"
@@ -31,9 +33,11 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QStackedLayout* stackedLayout;
     FigureModel* model;
     RenderWidget *renderWidget;
     InfoWidget *infoWidget;
     DataReceiver *dataReceiver;
+    QThread *dataReceiverThread;
 };
 #endif // MAINWINDOW_H

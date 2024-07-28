@@ -41,6 +41,5 @@ void DataReceiver::readPendingDatagrams()
         quint16 senderPort;
         udpSocket->readDatagram(datagramData.data(), datagramData.size(), &sender, &senderPort);
         emit figureReceived(datagramData);
-
     }
 }

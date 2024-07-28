@@ -13,23 +13,33 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , stackedLayout(new QStackedLayout(this))
     , model(new FigureModel(this))
     , renderWidget(new RenderWidget(model, this))
     , infoWidget(new InfoWidget(model, this))
     , dataReceiver(new DataReceiver(this))
+    , dataReceiverThread(new QThread(this))
 {
     ui->setupUi(this);
     setCentralWidget(renderWidget);
 
     createMenu();
 
+
+
+    dataReceiver->moveToThread(dataReceiverThread);
+
+    connect(dataReceiverThread, &QThread::started, dataReceiver, &DataReceiver::startReceiving);
     connect(dataReceiver, &DataReceiver::figureReceived, this, &MainWindow::onFigureReceived);
-    dataReceiver->startReceiving();
+    connect(dataReceiverThread, &QThread::finished, dataReceiverThread, &QThread::deleteLater);
+    dataReceiverThread->start();
 }
 
 MainWindow::~MainWindow()
 {
     dataReceiver->stopReceiving();
+    dataReceiverThread->quit();
+    dataReceiverThread->wait();
     delete ui;
 }
 
@@ -50,13 +60,21 @@ void MainWindow::createMenu()
 
     QAction *renderAction = viewMenu->addAction(tr("Отрисовка"));
     connect(renderAction, &QAction::triggered, [this]() {
-        setCentralWidget(renderWidget);
+        stackedLayout->setCurrentIndex(0);
     });
 
     QAction *infoAction = viewMenu->addAction(tr("Информация"));
     connect(infoAction, &QAction::triggered, [this]() {
-        setCentralWidget(infoWidget);
+        stackedLayout->setCurrentIndex(1);
     });
 
+    stackedLayout = new QStackedLayout;
+    stackedLayout->addWidget(renderWidget);
+    stackedLayout->addWidget(infoWidget);
+
+    QWidget *centralWidget = new QWidget;
+    centralWidget->setLayout(stackedLayout);
+
+    setCentralWidget(centralWidget);
     setMenuBar(menuBar);
 }

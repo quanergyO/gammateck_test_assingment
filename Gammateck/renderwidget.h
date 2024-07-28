@@ -5,7 +5,6 @@
 #include "api_generated.h"
 #include "figuretablemodel.h"
 
-#include <iostream>
 
 class RenderWidget : public QWidget
 {

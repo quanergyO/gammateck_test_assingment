@@ -24,6 +24,7 @@ public:
 
 signals:
     void figureRemoved(int row);
+    void dataChange();
 
 private:
     const DAO::Types::IFigure* convertRawFigureToDAO(const Figure* figure) const;

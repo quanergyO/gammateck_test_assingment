@@ -23,6 +23,7 @@ void FigureModel::addFigure(const Figure *figure)
     beginInsertRows(QModelIndex(), figures.size(), figures.size());
     figures.append(convertRawFigureToDAO(figure));
     endInsertRows();
+    emit dataChange();
 }
 
 void FigureModel::removeFigure(int row)
@@ -35,6 +36,7 @@ void FigureModel::removeFigure(int row)
     figures.removeAt(row);
     endRemoveRows();
     emit figureRemoved(row);
+    emit dataChange();
 }
 
 const DAO::Types::IFigure* FigureModel::getFigure(int index)
@@ -74,9 +76,9 @@ QVariant FigureModel::data(const QModelIndex &index, int role) const
     case 3:
         return QString::fromStdString(figure->getRegion());
     case 4:
-        return ""; // TODO QIcon()
+        return "Скрыть";
     case 5:
-        return QString::fromStdString("Удалить"); // TODO QIcon()
+        return "Удалить";
     default:
         return QVariant();
     }
