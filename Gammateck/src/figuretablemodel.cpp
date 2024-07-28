@@ -5,7 +5,23 @@
 #include <QPushButton>
 #include <QStandardItem>
 
-#include <iostream>
+namespace {
+namespace Config {
+namespace Images {
+static const QString hideImage = ":/images/hide.png";
+static const QString hideImage2 =":/images/hide2.png";
+static const QString deleteImage =  ":/images/delete.png";
+}
+namespace TableHeader {
+static const QString id = "ID";
+static const QString type = "Type";
+static const QString position = "Position(X, Y)";
+static const QString reginon = "Region(Width, Height)";
+static const QString hide = "Hide";
+static const QString remove = "Remove";
+}
+} // namespace Config
+}
 
 FigureModel::FigureModel(QObject *parent)
     : QAbstractTableModel(parent)
@@ -91,11 +107,11 @@ QVariant FigureModel::data(const QModelIndex &index, int role) const
         if (index.column() == 4) {
             const auto *figure = figures.at(index.row());
             return figure->isVisible() ?
-                   ":/resourses/hide.png" :
-                   ":/resourses/hide2.png";
+                       Config::Images::hideImage :
+                       Config::Images::hideImage2;
         }
         else if (index.column() == 5)
-            return ":/resourses/delete.png";
+            return Config::Images::deleteImage;
     }
     return QVariant();
 }
@@ -108,17 +124,17 @@ QVariant FigureModel::headerData(int section, Qt::Orientation orientation, int r
     if (orientation == Qt::Horizontal) {
         switch (section) {
         case 0:
-            return QString("ID");
+            return Config::TableHeader::id;
         case 1:
-            return QString("Type");
+            return Config::TableHeader::type;
         case 2:
-            return QString("Position(X, Y)");
+            return Config::TableHeader::position;
         case 3:
-            return QString("Region(Width, Height)");
+            return Config::TableHeader::reginon;
         case 4:
-            return QString("Hide");
+            return Config::TableHeader::hide;
         case 5:
-            return QString("Remove");
+            return Config::TableHeader::remove;
         default:
             return QVariant();
         }
