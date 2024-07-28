@@ -13,8 +13,9 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , renderWidget(new RenderWidget(this))
-    , infoWidget(new InfoWidget(this))
+    , model(new FigureModel(this))
+    , renderWidget(new RenderWidget(model, this))
+    , infoWidget(new InfoWidget(model, this))
     , dataReceiver(new DataReceiver(this))
 {
     ui->setupUi(this);
@@ -35,14 +36,9 @@ MainWindow::~MainWindow()
 void MainWindow::onFigureReceived(const QByteArray &data)
 {
     auto figure = flatbuffers::GetRoot<Figure>(data.constData());
-    auto test = GetFigure(data.constData());
-
-    std::string isNull = (figure == nullptr) ? "null" : "not null";
-    std::cout << "Deserialize " << isNull << std::endl;
 
     if (figure != nullptr) {
-        renderWidget->addFigure(test);
-        infoWidget->addFigureInfo(test);
+        model->addFigure(figure);
     }
 
 }
@@ -50,14 +46,14 @@ void MainWindow::onFigureReceived(const QByteArray &data)
 void MainWindow::createMenu()
 {
     QMenuBar *menuBar = new QMenuBar(this);
-    QMenu *viewMenu = menuBar->addMenu("Меню");
+    QMenu *viewMenu = menuBar->addMenu(tr("Меню"));
 
-    QAction *renderAction = viewMenu->addAction("Отрисовка");
+    QAction *renderAction = viewMenu->addAction(tr("Отрисовка"));
     connect(renderAction, &QAction::triggered, [this]() {
         setCentralWidget(renderWidget);
     });
 
-    QAction *infoAction = viewMenu->addAction("Информация");
+    QAction *infoAction = viewMenu->addAction(tr("Информация"));
     connect(infoAction, &QAction::triggered, [this]() {
         setCentralWidget(infoWidget);
     });

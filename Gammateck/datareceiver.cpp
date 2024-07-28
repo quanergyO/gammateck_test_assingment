@@ -40,7 +40,7 @@ void DataReceiver::readPendingDatagrams()
         QHostAddress sender;
         quint16 senderPort;
         udpSocket->readDatagram(datagramData.data(), datagramData.size(), &sender, &senderPort);
-
         emit figureReceived(datagramData);
+
     }
 }

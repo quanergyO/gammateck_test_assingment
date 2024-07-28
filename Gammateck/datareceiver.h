@@ -4,10 +4,6 @@
 #include <QObject>
 #include <QUdpSocket>
 #include <QNetworkDatagram>
-#include <QJsonObject>
-#include <QJsonDocument>
-#include <QDebug>
-
 
 class DataReceiver : public QObject
 {

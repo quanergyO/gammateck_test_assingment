@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "api_generated.h"
+#include "figuretablemodel.h"
 
 #include <iostream>
 
@@ -11,24 +12,20 @@ class RenderWidget : public QWidget
     Q_OBJECT
 
 public:
-    RenderWidget(QWidget *parent = nullptr);
+    RenderWidget(FigureModel* model, QWidget *parent = nullptr);
     ~RenderWidget();
-
-public slots:
-    void addFigure(const Figure *figure);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
 
+private:
+    void drawRect(QPainter &painter, const DAO::Types::Rect *data);
+    void drawEllipse(QPainter &painter, const DAO::Types::Ellipse *data);
+    void drawTriangle(QPainter &painter, const DAO::Types::Triangle *data);
+    void drawLine(QPainter &painter, const DAO::Types::Line *data);
 
 private:
-    void drawRect(QPainter &painter, const RectData *data);
-    void drawEllipse(QPainter &painter, const EllipseData *data);
-    void drawTriangle(QPainter &painter, const TriangleData *data);
-    void drawLine(QPainter &painter, const LineData *data);
-
-private:
-    QVector<const Figure *> figures;
+    FigureModel* model;
 };
 
 #endif // RENDERWIDGET_H

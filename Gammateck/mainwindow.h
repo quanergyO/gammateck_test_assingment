@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 #include "datareceiver.h"
+#include "figuretablemodel.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -28,9 +29,9 @@ private:
 private slots:
     void onFigureReceived(const QByteArray &data);
 
-
 private:
     Ui::MainWindow *ui;
+    FigureModel* model;
     RenderWidget *renderWidget;
     InfoWidget *infoWidget;
     DataReceiver *dataReceiver;

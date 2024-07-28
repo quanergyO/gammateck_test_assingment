@@ -10,18 +10,22 @@ CONFIG += c++17
 
 SOURCES += \
     datareceiver.cpp \
+    figuretablemodel.cpp \
     infowidget.cpp \
     main.cpp \
     mainwindow.cpp \
-    renderwidget.cpp
+    renderwidget.cpp \
+    typesdao.cpp
 
 HEADERS += \
     datareceiver.h \
+    figuretablemodel.h \
     infowidget.h \
     mainwindow.h \
     renderwidget.h \
     api_generated.h \
-    ../api.fbs
+    ../api.fbs \
+    typesdao.h
 
 FORMS += \
     mainwindow.ui
