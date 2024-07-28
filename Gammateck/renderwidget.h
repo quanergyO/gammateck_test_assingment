@@ -2,6 +2,7 @@
 #define RENDERWIDGET_H
 
 #include <QWidget>
+#include <QMouseEvent>
 #include "api_generated.h"
 #include "figuretablemodel.h"
 
@@ -16,6 +17,9 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
     void drawRect(QPainter &painter, const DAO::Types::Rect *data);
@@ -24,6 +28,9 @@ private:
     void drawLine(QPainter &painter, const DAO::Types::Line *data);
 
 private:
+    int selectedFigureIndex = 1;
+    QPoint lastMousePos;
+    bool isDragging = false;
     FigureModel* model;
 };
 

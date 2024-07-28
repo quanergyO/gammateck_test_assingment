@@ -2,6 +2,8 @@
 #define TYPESDAO_H
 
 #include "api_generated.h"
+#include <QPoint>
+#include <QRect>
 #include <string>
 
 namespace DAO
@@ -17,6 +19,10 @@ public:
     virtual std::string getType() const = 0;
     virtual std::string getPosition() const = 0;
     virtual std::string getRegion() const = 0;
+    virtual void setVisible(bool visible) = 0;
+    virtual bool isVisible() const = 0;
+    virtual bool contains(const QPoint& point) const = 0;
+    virtual void move(int dx, int dy) = 0;
 };
 
 class Rect : public IFigure
@@ -26,14 +32,17 @@ public:
     std::string getType() const override;
     std::string getPosition() const override;
     std::string getRegion() const override;
+    void setVisible(bool visible) override;
+    bool isVisible() const override;
     int getX() const;
     int getY() const;
     int getWidth() const;
     int getHeight() const;
     std::string getColorHex() const;
-
-
+    bool contains(const QPoint& point) const override;
+    void move(int dx, int dy) override;
 private:
+    bool visible;
     int x;
     int y;
     int width;
@@ -48,13 +57,18 @@ public:
     std::string getType() const override;
     std::string getPosition() const override;
     std::string getRegion() const override;
+    void setVisible(bool visible) override;
+    bool isVisible() const override;
     int getX() const;
     int getY() const;
     int getR1() const;
     int getR2() const;
     std::string getColorHex() const;
+    bool contains(const QPoint& point) const override;
+    void move(int dx, int dy) override;
 
 private:
+    bool visible;
     int x;
     int y;
     int r1;
@@ -69,6 +83,8 @@ public:
     std::string getType() const override;
     std::string getPosition() const override;
     std::string getRegion() const override;
+    void setVisible(bool visible) override;
+    bool isVisible() const override;
     int getX1() const;
     int getY1() const;
     int getX2() const;
@@ -76,8 +92,11 @@ public:
     int getX3() const;
     int getY3() const;
     std::string getColorHex() const;
+    bool contains(const QPoint& point) const override;
+    void move(int dx, int dy) override;
 
 private:
+    bool visible;
     int x1;
     int y1;
     int x2;
@@ -94,13 +113,18 @@ public:
     std::string getType() const override;
     std::string getPosition() const override;
     std::string getRegion() const override;
+    void setVisible(bool visible) override;
+    bool isVisible() const override;
     int getX1() const;
     int getY1() const;
     int getX2() const;
     int getY2() const;
     std::string getColorHex() const;
+    bool contains(const QPoint& point) const override;
+    void move(int dx, int dy) override;
 
 private:
+    bool visible;
     int x1;
     int y1;
     int x2;

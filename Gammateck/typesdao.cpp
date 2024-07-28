@@ -12,6 +12,8 @@ const uint8_t* IFigure::getRawData(const Figure* figure) const
     return payload_data;
 }
 
+
+
 Rect::Rect(const Figure* figure)
 {
     auto rawData = IFigure::getRawData(figure);
@@ -21,6 +23,7 @@ Rect::Rect(const Figure* figure)
     width = rectData->width();
     height = rectData->height();
     color_hex = rectData->color_hex()->str();
+    visible = true;
 }
 
 std::string Rect::getType() const
@@ -61,6 +64,22 @@ std::string Rect::getColorHex() const {
     return color_hex;
 }
 
+void Rect::setVisible(bool visible) {
+    this->visible = visible;
+}
+
+bool Rect::isVisible() const {
+    return visible;
+}
+
+bool Rect::contains(const QPoint& point) const {
+    return QRect(x, y, width, height).contains(point);
+}
+void Rect::move(int dx, int dy) {
+    x += dx;
+    y += dy;
+}
+
 Ellipse::Ellipse(const Figure* figure)
 {
     auto rawData = IFigure::getRawData(figure);
@@ -70,6 +89,7 @@ Ellipse::Ellipse(const Figure* figure)
     r1 = ellipseData->r1();
     r2 = ellipseData->r2();
     color_hex = ellipseData->color_hex()->str();
+    visible = true;
 }
 
 std::string Ellipse::getType() const
@@ -112,6 +132,25 @@ std::string Ellipse::getColorHex() const
     return color_hex;
 }
 
+void Ellipse::setVisible(bool visible) {
+    this->visible = visible;
+}
+
+bool Ellipse::isVisible() const {
+    return visible;
+}
+
+bool Ellipse::contains(const QPoint& point) const {
+    double nx = (point.x() - x) / static_cast<double>(r1);
+    double ny = (point.y() - y) / static_cast<double>(r2);
+    return (nx * nx + ny * ny) <= 1.0;
+}
+
+void Ellipse::move(int dx, int dy) {
+    x += dx;
+    y += dy;
+}
+
 Triangle::Triangle(const Figure* figure)
 {
     auto rawData = IFigure::getRawData(figure);
@@ -123,6 +162,7 @@ Triangle::Triangle(const Figure* figure)
     x3 = triangleData->x3();
     y3 = triangleData->y3();
     color_hex = triangleData->color_hex()->str();
+    visible = true;
 }
 
 std::string Triangle::getType() const
@@ -175,6 +215,33 @@ std::string Triangle::getColorHex() const
     return color_hex;
 }
 
+void Triangle::setVisible(bool visible) {
+    this->visible = visible;
+}
+
+bool Triangle::isVisible() const {
+    return visible;
+}
+
+bool Triangle::contains(const QPoint& point) const {
+    auto sign = [](const QPoint& p1, const QPoint& p2, const QPoint& p3) {
+        return (p1.x() - p3.x()) * (p2.y() - p3.y()) - (p2.x() - p3.x()) * (p1.y() - p3.y());
+    };
+
+    QPoint v1(x1, y1), v2(x2, y2), v3(x3, y3);
+    bool b1 = sign(point, v1, v2) < 0.0f;
+    bool b2 = sign(point, v2, v3) < 0.0f;
+    bool b3 = sign(point, v3, v1) < 0.0f;
+
+    return ((b1 == b2) && (b2 == b3));
+}
+
+void Triangle::move(int dx, int dy) {
+    x1 += dx; y1 += dy;
+    x2 += dx; y2 += dy;
+    x3 += dx; y3 += dy;
+}
+
 Line::Line(const Figure* figure)
 {
     auto rawData = IFigure::getRawData(figure);
@@ -184,6 +251,7 @@ Line::Line(const Figure* figure)
     x2 = lineData->x2();
     y2 = lineData->y2();
     color_hex = lineData->color_hex()->str();
+    visible = true;
 }
 
 std::string Line::getType() const
@@ -224,6 +292,41 @@ int Line::getY2() const
 std::string Line::getColorHex() const
 {
     return color_hex;
+}
+
+void Line::setVisible(bool visible) {
+    this->visible = visible;
+}
+
+bool Line::isVisible() const {
+    return visible;
+}
+
+bool Line::contains(const QPoint& point) const {
+    const int threshold = 5;
+    int dx = x2 - x1;
+    int dy = y2 - y1;
+    int length_squared = dx*dx + dy*dy;
+
+    if (length_squared == 0) {
+        int pdx = point.x() - x1;
+        int pdy = point.y() - y1;
+        return (pdx*pdx + pdy*pdy) <= threshold*threshold;
+    }
+
+    double t = ((point.x() - x1) * dx + (point.y() - y1) * dy) / static_cast<double>(length_squared);
+    t = std::max(0.0, std::min(1.0, t));
+
+    double px = x1 + t * dx;
+    double py = y1 + t * dy;
+    double pdx = point.x() - px;
+    double pdy = point.y() - py;
+    return (pdx*pdx + pdy*pdy) <= threshold*threshold;
+}
+
+void Line::move(int dx, int dy) {
+    x1 += dx; y1 += dy;
+    x2 += dx; y2 += dy;
 }
 
 } // namespace Types

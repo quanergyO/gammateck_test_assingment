@@ -4,6 +4,7 @@
 #include <QAbstractTableModel>
 #include <QList>
 #include <QString>
+#include <QLabel>
 #include "typesdao.h"
 
 class FigureModel : public QAbstractTableModel {
@@ -22,15 +23,19 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
+    void toggleFigureVisibility(int row);
+    void moveFigure(int index, int dx, int dy);
 signals:
     void figureRemoved(int row);
+    void figuresMoved();
     void dataChange();
 
 private:
-    const DAO::Types::IFigure* convertRawFigureToDAO(const Figure* figure) const;
+    DAO::Types::IFigure* convertRawFigureToDAO(const Figure* figure) const;
+
 
 private:
-    QList<const DAO::Types::IFigure*> figures;
+    QList<DAO::Types::IFigure*> figures;
 };
 
 #endif // FIGUREMODEL_H

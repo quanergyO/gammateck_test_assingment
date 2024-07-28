@@ -19,6 +19,7 @@ public:
 
 signals:
     void deleteFigure(int row);
+    void toggleVisibility(int index);
 
 private:
     FigureModel *model;

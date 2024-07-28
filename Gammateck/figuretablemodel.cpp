@@ -3,12 +3,14 @@
 #include <QString>
 #include <QDebug>
 #include <QPushButton>
+#include <QStandardItem>
 
 #include <iostream>
 
 FigureModel::FigureModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
+
 }
 
 FigureModel::~FigureModel()
@@ -61,27 +63,41 @@ int FigureModel::columnCount(const QModelIndex &parent) const
 
 QVariant FigureModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || role != Qt::DisplayRole)
+    if (!index.isValid())
         return QVariant();
 
-    const auto *figure = figures.at(index.row());
+    if (role == Qt::DisplayRole)
+    {
+        const auto *figure = figures.at(index.row());
 
-    switch (index.column()) {
-    case 0:
-        return index.row();
-    case 1:
-        return QString::fromStdString(figure->getType());
-    case 2:
-        return QString::fromStdString(figure->getPosition());
-    case 3:
-        return QString::fromStdString(figure->getRegion());
-    case 4:
-        return "Скрыть";
-    case 5:
-        return "Удалить";
-    default:
-        return QVariant();
+        switch (index.column()) {
+        case 0:
+            return index.row();
+        case 1:
+            return QString::fromStdString(figure->getType());
+        case 2:
+            return QString::fromStdString(figure->getPosition());
+        case 3:
+            return QString::fromStdString(figure->getRegion());
+        case 4:
+        case 5:
+            return QString();
+        default:
+            return QVariant();
+        }
     }
+    else if (role == Qt::UserRole)
+    {
+        if (index.column() == 4) {
+            const auto *figure = figures.at(index.row());
+            return figure->isVisible() ?
+                   ":/resourses/hide.png" :
+                   ":/resourses/hide2.png";
+        }
+        else if (index.column() == 5)
+            return ":/resourses/delete.png";
+    }
+    return QVariant();
 }
 
 QVariant FigureModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -110,7 +126,7 @@ QVariant FigureModel::headerData(int section, Qt::Orientation orientation, int r
     return QVariant();
 }
 
-const DAO::Types::IFigure* FigureModel::convertRawFigureToDAO(const Figure* figure) const
+DAO::Types::IFigure* FigureModel::convertRawFigureToDAO(const Figure* figure) const
 {
     DAO::Types::IFigure* figureToAppend = nullptr;
     switch(figure->type()) {
@@ -128,4 +144,21 @@ const DAO::Types::IFigure* FigureModel::convertRawFigureToDAO(const Figure* figu
         break;
     }
     return figureToAppend;
+}
+
+void FigureModel::toggleFigureVisibility(int row) {
+    if (row >= 0 && row < figures.size()) {
+        DAO::Types::IFigure* figure = figures[row];
+        figure->setVisible(!figure->isVisible());
+        emit dataChanged(index(row, 0), index(row, columnCount() - 1));
+        emit dataChange();
+    }
+}
+
+void FigureModel::moveFigure(int index, int dx, int dy) {
+    if (index >= 0 && index < figures.size()) {
+        figures[index]->move(dx, dy);
+        emit dataChanged(this->index(index, 0), this->index(index, columnCount() - 1));
+        emit figuresMoved();
+    }
 }
